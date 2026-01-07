@@ -3,12 +3,12 @@ package net.javaguides.springboot_rest_api.controller;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import net.javaguides.springboot_rest_api.dto.UserDto;
-import net.javaguides.springboot_rest_api.entity.User;
 import net.javaguides.springboot_rest_api.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
   private UserService userService;
 
-  @PostMapping
+  @PostMapping()
   public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) {
     UserDto savedUser = userService.createUser(userDto);
 
@@ -29,12 +29,12 @@ public class UserController {
   }
 
   @GetMapping("{userId}")
-  public ResponseEntity<UserDto> getUserById(Long userId) {
+  public ResponseEntity<UserDto> getUserById(@PathVariable Long userId) {
     UserDto user = userService.getUserById(userId);
     return new ResponseEntity<>(user, HttpStatus.OK);
   }
 
-  @GetMapping
+  @GetMapping()
   public ResponseEntity<List<UserDto>> getAllUsers() {
     List<UserDto> users = userService.getAllUsers();
     return new ResponseEntity<>(users, HttpStatus.OK);
@@ -47,7 +47,7 @@ public class UserController {
   }
 
   @DeleteMapping("{userId}")
-  public  ResponseEntity<String> deleteUser(Long userId) {
+  public ResponseEntity<String> deleteUser(@PathVariable Long userId) {
     userService.deleteById(userId);
     return new ResponseEntity<>("User successfully deleted!", HttpStatus.OK);
   }

@@ -5,6 +5,8 @@ import java.util.Optional;
 import lombok.AllArgsConstructor;
 import net.javaguides.springboot_rest_api.dto.UserDto;
 import net.javaguides.springboot_rest_api.entity.User;
+import net.javaguides.springboot_rest_api.exception.EmailAlreadyExistsException;
+import net.javaguides.springboot_rest_api.exception.ResourceNotFoundException;
 import net.javaguides.springboot_rest_api.repository.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,13 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public UserDto createUser(UserDto userDto) {
+
+    Optional<User> optionalUser = userRepository.findByEmail(userDto.getEmail());
+
+    if (optionalUser.isPresent()) {
+      throw new EmailAlreadyExistsException(userDto.getEmail());
+    }
+
     User user = modelMapper.map(userDto, User.class);
 
     user = userRepository.save(user);
@@ -26,8 +35,7 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public UserDto getUserById(Long userId) {
-    Optional<User> optionalUser = userRepository.findById(userId);
-    User user = optionalUser.get();
+    User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
     return modelMapper.map(user, UserDto.class);
   }
 
@@ -38,7 +46,9 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public UserDto updateUser(UserDto userDto) {
-    User existingUser = userRepository.findById(userDto.getId()).get();
+    User existingUser =
+        userRepository.findById(userDto.getId()).orElseThrow(() -> new ResourceNotFoundException("User", "id",
+            userDto.getId()));
     existingUser.setFirstName(userDto.getFirstName());
     existingUser.setLastName(userDto.getLastName());
     existingUser.setEmail(userDto.getEmail());
