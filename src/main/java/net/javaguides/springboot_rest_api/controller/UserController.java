@@ -1,5 +1,6 @@
 package net.javaguides.springboot_rest_api.controller;
 
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import net.javaguides.springboot_rest_api.dto.UserDto;
@@ -22,7 +23,7 @@ public class UserController {
   private UserService userService;
 
   @PostMapping()
-  public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) {
+  public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto) {
     UserDto savedUser = userService.createUser(userDto);
 
     return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
@@ -41,7 +42,7 @@ public class UserController {
   }
 
   @PutMapping("{userId}")
-  public ResponseEntity<UserDto> updateUser(@RequestBody UserDto user) {
+  public ResponseEntity<UserDto> updateUser(@Valid @RequestBody UserDto user) {
     UserDto updatedUser = userService.updateUser(user);
     return new ResponseEntity<>(updatedUser, HttpStatus.OK);
   }
