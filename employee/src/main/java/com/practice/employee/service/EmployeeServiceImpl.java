@@ -1,8 +1,11 @@
 package com.practice.employee.service;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import com.practice.employee.dto.DepartmentDto;
 import com.practice.employee.dto.EmployeeDto;
 import com.practice.employee.entity.Employee;
 import com.practice.employee.repository.EmployeeRepository;
@@ -15,6 +18,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     private ModelMapper modelMapper;
     private EmployeeRepository employeeRepository;
+    private RestTemplate restTemplate;
 
     @Override
     public EmployeeDto saveEmployee(EmployeeDto employeeDto) {
@@ -26,7 +30,18 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public EmployeeDto getEmployeeById(Long id) {
         Employee employee = employeeRepository.findById(id).get();
-        return modelMapper.map(employee, EmployeeDto.class);
+
+        ResponseEntity<DepartmentDto> responseEntity = restTemplate.getForEntity(
+                "http://localhost:8081/api/departments/" + employee.getDepartmentCode(),
+                DepartmentDto.class);
+
+        DepartmentDto departmentDto = responseEntity.getBody();
+
+        EmployeeDto employeeDto = modelMapper.map(employee, EmployeeDto.class);
+
+        employeeDto.setDepartmentDto(departmentDto);
+
+        return employeeDto;
     }
 
 }
