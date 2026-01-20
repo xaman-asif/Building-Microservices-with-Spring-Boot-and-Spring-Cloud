@@ -1,5 +1,6 @@
 package com.practice.employee.service;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,9 @@ public class EmployeeServiceImpl implements EmployeeService {
         return modelMapper.map(savedEmployee, EmployeeDto.class);
     }
 
+    @CircuitBreaker(name = "${spring.application.name",
+        fallbackMethod = "getDefaultDepartment"
+    )
     @Override
     public EmployeeDto getEmployeeById(Long id) {
         Employee employee = employeeRepository.findById(id).get();
@@ -55,5 +59,4 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         return employeeDto;
     }
-
 }
