@@ -13,7 +13,7 @@ public class MessageController {
   private String message;
 
   @GetMapping("/message")
-  private String getMessageFromCloudProperties() {
+  public String getMessageFromCloudProperties() {
     return message;
   }
 }
