@@ -1,7 +1,11 @@
 package com.practice.employee.service;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
+import lombok.NonNull;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -23,6 +27,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     private RestTemplate restTemplate;
     private WebClient webClient;
     private APIClient apiClient;
+    private static final Logger logger = LoggerFactory.getLogger(EmployeeServiceImpl.class);
 
     @Override
     public EmployeeDto saveEmployee(EmployeeDto employeeDto) {
@@ -31,11 +36,14 @@ public class EmployeeServiceImpl implements EmployeeService {
         return modelMapper.map(savedEmployee, EmployeeDto.class);
     }
 
-    @CircuitBreaker(name = "${spring.application.name",
-        fallbackMethod = "getDefaultDepartment"
-    )
+//    @CircuitBreaker(name = "${spring.application.name}",
+//        fallbackMethod = "getDefaultDepartment"
+//    )
+    @Retry(name = "${spring.application.name}", fallbackMethod = "getDefaultDepartment")
     @Override
     public EmployeeDto getEmployeeById(Long id) {
+
+        logger.info("inside getEmployeeById() method");
         Employee employee = employeeRepository.findById(id).get();
 
         // ResponseEntity<DepartmentDto> responseEntity = restTemplate.getForEntity(
@@ -59,4 +67,20 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         return employeeDto;
     }
+
+  public EmployeeDto getDefaultDepartment(Long id, Throwable throwable) {
+    logger.info("inside getDefaultDepartment() method");
+    Employee employee = employeeRepository.findById(id).get();
+
+    DepartmentDto departmentDto = new DepartmentDto();
+    departmentDto.setDepartmentName("R&D");
+    departmentDto.setDepartmentCode("RD001");
+    departmentDto.setDepartmentDescription("Research and Development Department");
+
+    EmployeeDto employeeDto = modelMapper.map(employee, EmployeeDto.class);
+
+    employeeDto.setDepartmentDto(departmentDto);
+
+    return employeeDto;
+  }
 }
