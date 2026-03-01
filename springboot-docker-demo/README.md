@@ -1,0 +1,5 @@
+docker build -t springboot-docker-demo . (To run a docker script)
+docker images (To see avilable docker images)
+docker run -p 8080:8080 (To run docker on an specific port)
+docker run -p 8081:8080 -d  springboot-docker-demo:0.1.RELEASE (To run docker on an specific port - silently)
+docker logs -f 7f84 (To see logs of silently ran docker image)
