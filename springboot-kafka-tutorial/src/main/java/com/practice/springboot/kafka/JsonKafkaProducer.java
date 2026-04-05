@@ -3,6 +3,7 @@ package com.practice.springboot.kafka;
 import com.practice.springboot.payload.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.Message;
@@ -11,9 +12,11 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class JsonKafkaProducer {
-  private static final Logger LOGGER = LoggerFactory.getLogger(JsonKafkaProducer.class);
 
+  private static final Logger LOGGER = LoggerFactory.getLogger(JsonKafkaProducer.class);
   private final KafkaTemplate<String, User> kafkaTemplate;
+  @Value("${spring.kafka.topic-json.name}")
+  private String topic2;
 
   public JsonKafkaProducer(KafkaTemplate<String, User> kafkaTemplate) {
     this.kafkaTemplate = kafkaTemplate;
@@ -21,14 +24,7 @@ public class JsonKafkaProducer {
 
   public void sendMessage(User user) {
     LOGGER.info(String.format("User sent -> %s", user.toString()));
-    Message<User> message = MessageBuilder.withPayload(user).setHeader(KafkaHeaders.TOPIC, "another-json-topic")
-        .build();
-    kafkaTemplate.send(message);
-  }
-
-  public void sendMessage(String s) {
-    LOGGER.info(String.format("Message sent -> %s", s));
-    Message<String> message = MessageBuilder.withPayload(s).setHeader(KafkaHeaders.TOPIC, "another-topic").build();
+    Message<User> message = MessageBuilder.withPayload(user).setHeader(KafkaHeaders.TOPIC, topic2).build();
     kafkaTemplate.send(message);
   }
 }
