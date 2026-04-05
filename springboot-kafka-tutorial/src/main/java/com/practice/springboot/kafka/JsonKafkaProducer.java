@@ -20,9 +20,15 @@ public class JsonKafkaProducer {
   }
 
   public void sendMessage(User user) {
-    LOGGER.info(String.format("Message sent -> %s", user.toString()));
+    LOGGER.info(String.format("User sent -> %s", user.toString()));
+    Message<User> message = MessageBuilder.withPayload(user).setHeader(KafkaHeaders.TOPIC, "another-json-topic")
+        .build();
+    kafkaTemplate.send(message);
+  }
 
-    Message<User> message = MessageBuilder.withPayload(user).setHeader(KafkaHeaders.TOPIC, "another-topic").build();
+  public void sendMessage(String s) {
+    LOGGER.info(String.format("Message sent -> %s", s));
+    Message<String> message = MessageBuilder.withPayload(s).setHeader(KafkaHeaders.TOPIC, "another-topic").build();
     kafkaTemplate.send(message);
   }
 }
