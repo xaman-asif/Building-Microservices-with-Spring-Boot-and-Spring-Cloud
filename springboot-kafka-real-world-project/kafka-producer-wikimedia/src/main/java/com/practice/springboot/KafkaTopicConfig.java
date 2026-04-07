@@ -10,6 +10,6 @@ public class KafkaTopicConfig {
 
   @Bean
   public NewTopic topic() {
-    return TopicBuilder.name("wikimedia_recentchange").build();
+    return TopicBuilder.name("${spring.kafka.topic.name}").build();
   }
 }

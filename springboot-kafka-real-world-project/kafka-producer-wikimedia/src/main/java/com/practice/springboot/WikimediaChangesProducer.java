@@ -7,24 +7,23 @@ import com.launchdarkly.eventsource.background.BackgroundEventSource;
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
 import okhttp3.Headers;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
 public class WikimediaChangesProducer {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(WikimediaChangesProducer.class);
-
   private final KafkaTemplate<String, String> kafkaTemplate;
+  private final String topic;
 
-  public WikimediaChangesProducer(KafkaTemplate<String, String> kafkaTemplate) {
+  public WikimediaChangesProducer(KafkaTemplate<String, String> kafkaTemplate,
+                                  @Value("${spring.kafka.topic.name}") String topic) {
     this.kafkaTemplate = kafkaTemplate;
+    this.topic = topic;
   }
 
   public void sendMessage() throws InterruptedException {
-    String topic = "wikimedia_recentchange";
     String url = "https://stream.wikimedia.org/v2/stream/recentchange";
     BackgroundEventHandler backgroundEventHandler = new WikimediaChangesHandler(kafkaTemplate, topic);
 
@@ -45,4 +44,3 @@ public class WikimediaChangesProducer {
     }
   }
 }
-
