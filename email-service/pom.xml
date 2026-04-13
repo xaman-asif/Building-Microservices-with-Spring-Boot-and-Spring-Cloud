@@ -8,7 +8,7 @@
         <version>3.0.0-M3</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>net.javaguides</groupId>
+    <groupId>com.practice</groupId>
     <artifactId>email-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>email-service</name>
@@ -26,7 +26,7 @@
             <artifactId>spring-kafka</artifactId>
         </dependency>
         <dependency>
-            <groupId>net.javaguides</groupId>
+            <groupId>com.practice</groupId>
             <artifactId>base-domains</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
